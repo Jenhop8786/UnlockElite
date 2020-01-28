@@ -19,3 +19,23 @@ function unlockElite_features() {
 
 add_action('after_setup_theme', 'unlockElite_features');
 
+function unlockElite_adjust_queries($query) {
+  if (!is_admin() AND is_post_type_archive('event') AND $query->is_main_query()) {
+  	$today = date('Y-m-d H:i:s');
+  	$query->set('meta_key', 'event_date_');
+  	$query->set('orderby', 'meta_value_num');
+  	$query->set('order', 'ASC');
+  	$query->set('meta_query', array(
+              array(
+                'key' => 'event_date_',
+                'compare' => '>=',
+                'value' => $today,
+                'type' => 'numeric'
+              )
+            ));
+  }
+
+}
+
+add_action('pre_get_posts', 'unlockElite_adjust_queries');
+
